@@ -15,77 +15,109 @@
     font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     background:#0d0d0d; color:#f2f2f2;
     height:100vh; overflow:hidden;
-    font-size:15px;
+    font-size:13px;
   }
   #app { display:flex; flex-direction:column; height:100%; }
 
   .header {
-    flex:0 0 auto; padding:9px 10px; background:#1a1a1a;
-    border-bottom:3px solid #ff8c00; font-weight:bold; font-size:16px;
+    flex:0 0 auto; padding:6px 8px; background:#1a1a1a;
+    border-bottom:2px solid #ff8c00; font-weight:bold; font-size:13px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
 
-  .content { flex:1 1 auto; overflow-y:auto; padding:6px 8px; }
+  .content { flex:1 1 auto; overflow-y:auto; padding:5px 6px; }
 
-  /* ---- generic list item ---- */
+  /* ---- generic list item (compact) ---- */
   button.navitem, .navitem {
     display:block; width:100%; text-align:left; background:#161616; color:#f2f2f2;
-    border:1px solid #2a2a2a; border-radius:8px; padding:11px 10px; margin:0 0 7px 0;
-    font-size:15px; font-family:inherit; line-height:1.3;
+    border:1px solid #2a2a2a; border-radius:6px; padding:6px 8px; margin:0 0 4px 0;
+    font-size:13px; font-family:inherit; line-height:1.25;
   }
   .navitem:focus { background:#ff8c00; color:#111; outline:none; border-color:#ff8c00; font-weight:bold; }
+  .navitem .bm-sub { display:block; font-size:10px; color:#999; font-weight:normal; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .navitem:focus .bm-sub { color:#3a2200; }
 
-  /* ---- home screen tiles ---- */
-  .tiles-wrap { display:flex; gap:10px; padding:14px 10px 4px; }
-  .tile {
-    flex:1 1 0; height:94px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:5px; border-radius:20px; border:2px solid var(--tc); background:#141414;
-    position:relative; padding:6px 4px; margin:0;
+  /* ---- home: top category tiles (rectangular, wider than app icons) ---- */
+  .cat-tiles-wrap { display:flex; gap:6px; padding:2px 0 8px; }
+  .cat-tile {
+    flex:1 1 0; height:46px; display:flex; align-items:center; justify-content:center; gap:6px;
+    border-radius:10px; border:2px solid var(--tc); background:#141414;
+    padding:4px 6px; margin:0; position:relative;
   }
-  .tile:focus { background:var(--tc); }
-  .tile-badge {
-    position:absolute; top:5px; left:6px; font-size:10px; font-weight:bold;
-    background:var(--tc); color:#0d0d0d; width:16px; height:16px; border-radius:50%;
+  .cat-tile:focus { background:var(--tc); }
+  .cat-tile .tile-badge {
+    position:absolute; top:3px; left:5px; font-size:9px; font-weight:bold;
+    background:var(--tc); color:#0d0d0d; width:13px; height:13px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
   }
-  .tile:focus .tile-badge { background:#0d0d0d; color:var(--tc); }
-  .tile-icon { font-size:25px; font-weight:bold; color:var(--tc); }
-  .tile:focus .tile-icon { color:#0d0d0d; }
-  .tile-label { font-size:12px; font-weight:bold; color:#f2f2f2; }
-  .tile:focus .tile-label { color:#0d0d0d; }
-  .tile-count { font-size:10px; color:#888; }
-  .tile:focus .tile-count { color:#222; }
-  .hint { text-align:center; color:#777; font-size:11px; margin-top:14px; padding:0 10px; }
+  .cat-tile:focus .tile-badge { background:#0d0d0d; color:var(--tc); }
+  .cat-tile .tile-icon { font-size:17px; font-weight:bold; color:var(--tc); flex:0 0 auto; }
+  .cat-tile:focus .tile-icon { color:#0d0d0d; }
+  .cat-tile .tile-text { display:flex; flex-direction:column; align-items:flex-start; min-width:0; }
+  .cat-tile .tile-label { font-size:11px; font-weight:bold; color:#f2f2f2; white-space:nowrap; }
+  .cat-tile:focus .tile-label { color:#0d0d0d; }
+  .cat-tile .tile-count { font-size:9px; color:#888; }
+  .cat-tile:focus .tile-count { color:#222; }
 
-  /* ---- bookmark row with favicon ---- */
-  .bm-row { display:flex; align-items:center; gap:10px; width:100%; }
-  .icon-wrap { flex:0 0 auto; width:28px; height:28px; border-radius:7px; overflow:hidden; position:relative; background:#333; }
-  .favicon { width:28px; height:28px; object-fit:cover; display:block; }
+  /* ---- home: inline expanded list under a focused category tile ---- */
+  .inline-list-label { font-size:10px; color:#888; margin:0 0 4px 2px; text-transform:uppercase; letter-spacing:.03em; }
+
+  /* ---- home: app grid (bigger, rounder-square icons) ---- */
+  .app-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:7px; padding-top:2px; }
+  .app-tile {
+    aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:4px; border-radius:16px; border:1px solid #2f2f2f; background:#161616; padding:4px;
+    position:relative; margin:0;
+  }
+  .app-tile:focus { background:#ff8c00; border-color:#ff8c00; outline:none; }
+  .app-tile .app-idx {
+    position:absolute; top:3px; left:5px; font-size:9px; color:#666; font-weight:bold;
+  }
+  .app-tile:focus .app-idx { color:#3a2200; }
+  .app-icon-wrap { width:30px; height:30px; border-radius:9px; overflow:hidden; position:relative; background:#333; flex:0 0 auto; }
+  .app-favicon { width:30px; height:30px; object-fit:cover; display:block; }
+  .app-favicon-fallback {
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    font-weight:bold; font-size:13px; color:#0d0d0d; background:#555;
+  }
+  .app-tile-label {
+    font-size:9.5px; font-weight:600; color:#ddd; text-align:center; width:100%;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .app-tile:focus .app-tile-label { color:#111; }
+  .app-empty-msg { grid-column:1/-1; padding:14px 4px; text-align:center; color:#777; font-size:11px; }
+
+  .hint { text-align:center; color:#777; font-size:10px; margin-top:8px; padding:0 6px; }
+
+  /* ---- bookmark row with favicon (list screen + inline lists) ---- */
+  .bm-row { display:flex; align-items:center; gap:7px; width:100%; }
+  .icon-wrap { flex:0 0 auto; width:22px; height:22px; border-radius:6px; overflow:hidden; position:relative; background:#333; }
+  .favicon { width:22px; height:22px; object-fit:cover; display:block; }
   .favicon-fallback {
     position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-    font-weight:bold; font-size:13px; color:#0d0d0d;
+    font-weight:bold; font-size:11px; color:#0d0d0d;
   }
   .bm-name { flex:1 1 auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-  .content label { display:block; font-size:12px; color:#999; margin:9px 0 3px; }
+  .content label { display:block; font-size:10.5px; color:#999; margin:6px 0 2px; }
   .content input, .content select {
-    display:block; width:100%; padding:10px; margin-bottom:2px;
-    background:#1a1a1a; border:1px solid #444; color:#fff; border-radius:7px;
-    font-size:15px; font-family:inherit;
+    display:block; width:100%; padding:7px 8px; margin-bottom:1px;
+    background:#1a1a1a; border:1px solid #444; color:#fff; border-radius:6px;
+    font-size:13px; font-family:inherit;
   }
   .content input:focus, .content select:focus { border-color:#00caf2; outline:none; background:#111; }
 
-  .empty-msg { padding:26px 10px; text-align:center; color:#888; font-size:14px; line-height:1.5; }
-  .error-msg { color:#ff6b6b; font-size:13px; min-height:16px; margin-top:6px; }
-  .confirm-msg { padding:8px 2px 16px; font-size:15px; line-height:1.45; }
+  .empty-msg { padding:18px 8px; text-align:center; color:#888; font-size:12px; line-height:1.45; }
+  .error-msg { color:#ff6b6b; font-size:11px; min-height:14px; margin-top:4px; }
+  .confirm-msg { padding:6px 2px 12px; font-size:13px; line-height:1.4; }
 
   .footer {
     flex:0 0 auto; display:flex; align-items:center; justify-content:space-between;
-    background:#1a1a1a; border-top:1px solid #333; padding:9px 10px; font-size:13px;
+    background:#1a1a1a; border-top:1px solid #333; padding:6px 8px; font-size:11px;
   }
-  .sk { background:none; border:none; color:#00caf2; font-size:13px; padding:3px 4px; font-family:inherit; }
+  .sk { background:none; border:none; color:#00caf2; font-size:11px; padding:2px 3px; font-family:inherit; }
   .sk:focus { outline:1px dotted #00caf2; }
-  .sk-center { color:#777; font-size:11px; }
+  .sk-center { color:#777; font-size:9.5px; }
 </style>
 </head>
 <body>
@@ -95,17 +127,21 @@
 (function(){
   "use strict";
 
-  var STORAGE_KEY = "featurePhoneBookmarks_v2";
+  var STORAGE_KEY = "featurePhoneBookmarks_v3";
 
-  var CATS = {
-    Apps:    {label:"Apps",    color:"#ff8c00", icon:"A"},
-    Web:     {label:"Web",     color:"#00caf2", icon:"W"},
-    YouTube: {label:"YouTube", color:"#ff3b3b", icon:"Y"}
+  // Top-level categories shown as list-type sections (rectangular tiles + inline expandable list)
+  var LIST_CATS = {
+    Web:     {label:"Websites", color:"#00caf2", icon:"W"},
+    YouTube: {label:"Channels", color:"#ff3b3b", icon:"Y"}
   };
-  var CAT_ORDER = ["Apps", "Web", "YouTube"];
+  var LIST_CAT_ORDER = ["Web", "YouTube"];
+
+  // Apps live directly on the home grid, not behind a tile
+  var APP_CAT = "Apps";
+  var ALL_CAT_ORDER = ["Apps", "Web", "YouTube"]; // used for form category choices + migration
 
   var DEFAULT_DATA = {
-    categories: CAT_ORDER.slice(),
+    categories: ALL_CAT_ORDER.slice(),
     bookmarks: [
       {id:"d1", name:"Google", url:"https://www.google.com", category:"Web"},
       {id:"d2", name:"Wikipedia", url:"https://www.wikipedia.org", category:"Web"},
@@ -122,7 +158,11 @@
     ]
   };
 
-  var state = { screen: "home", ctx: {}, data: null };
+  // state.screen: "home" | "form" | "optionsMenu" | "confirm"
+  // state.ctx: screen-specific context
+  // state.homeFocusIndex: index into the flattened home focus-order array (persisted while on home)
+  // state.homeExpandedCat: which LIST_CAT (if any) is currently expanded inline on home
+  var state = { screen: "home", ctx: {}, data: null, homeFocusIndex: 0, homeExpandedCat: null };
   var stack = [];
 
   // ---------- storage ----------
@@ -132,7 +172,7 @@
     if(name === "Websites") return "Web";
     if(name === "PWAs") return "Apps";
     if(name === "YouTube Channels") return "YouTube";
-    if(CAT_ORDER.indexOf(name) !== -1) return name;
+    if(ALL_CAT_ORDER.indexOf(name) !== -1) return name;
     return "Web";
   }
 
@@ -140,10 +180,14 @@
     try{
       var raw = localStorage.getItem(STORAGE_KEY);
       if(raw){ state.data = JSON.parse(raw); }
-      else { state.data = clone(DEFAULT_DATA); }
+      else {
+        // try migrating from older key
+        var oldRaw = localStorage.getItem("featurePhoneBookmarks_v2");
+        state.data = oldRaw ? JSON.parse(oldRaw) : clone(DEFAULT_DATA);
+      }
       if(!state.data.bookmarks) state.data.bookmarks = [];
       state.data.bookmarks.forEach(function(b){ b.category = migrateCategory(b.category); });
-      state.data.categories = CAT_ORDER.slice();
+      state.data.categories = ALL_CAT_ORDER.slice();
       saveData();
     }catch(e){
       state.data = clone(DEFAULT_DATA);
@@ -156,18 +200,20 @@
 
   function genId(){ return "b" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function findBookmark(id){ return state.data.bookmarks.filter(function(b){return b.id===id;})[0]; }
+  function bookmarksIn(cat){ return state.data.bookmarks.filter(function(b){return b.category===cat;}); }
   function esc(s){
     return String(s==null?"":s).replace(/[&<>"']/g, function(c){
       return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
     });
   }
-  function faviconUrl(url){
-    var host = "";
-    try{ host = new URL(url).hostname; }catch(e){
+  function hostOf(url){
+    try{ return new URL(url).hostname; }catch(e){
       var m = String(url).match(/^https?:\/\/([^\/]+)/i);
-      host = m ? m[1] : url;
+      return m ? m[1] : url;
     }
-    return "https://www.google.com/s2/favicons?sz=64&domain=" + encodeURIComponent(host);
+  }
+  function faviconUrl(url){
+    return "https://www.google.com/s2/favicons?sz=64&domain=" + encodeURIComponent(hostOf(url));
   }
 
   // ---------- navigation ----------
@@ -189,7 +235,6 @@
     render();
   }
   function gotoHome(){ stack = []; state.screen = "home"; state.ctx = {}; render(); }
-  function gotoList(category){ stack = []; state.screen = "list"; state.ctx = {category: category}; render(); }
 
   function tryExit(){ try{ window.close(); }catch(e){} }
 
@@ -202,19 +247,57 @@
 
   function openConfirm(message, onYes){ pushScreen("confirm", {message: message, onYes: onYes}); }
 
+  // ---------- home focus model ----------
+  // Builds a flat ordered list describing every focusable item on the home screen,
+  // so softkeys/keys can act on "whatever is currently focused" reliably instead of
+  // guessing from DOM dataset attributes.
+  function buildHomeFocusOrder(){
+    var order = [];
+    LIST_CAT_ORDER.forEach(function(key){
+      order.push({type:"catTile", cat:key});
+    });
+    if(state.homeExpandedCat){
+      bookmarksIn(state.homeExpandedCat).forEach(function(b){
+        order.push({type:"inlineBookmark", cat:state.homeExpandedCat, id:b.id});
+      });
+    } else {
+      var apps = bookmarksIn(APP_CAT);
+      if(apps.length === 0){
+        order.push({type:"appEmpty"});
+      } else {
+        apps.forEach(function(b){
+          order.push({type:"appTile", id:b.id});
+        });
+      }
+    }
+    return order;
+  }
+
+  function currentHomeItem(){
+    var order = buildHomeFocusOrder();
+    if(order.length === 0) return null;
+    if(state.homeFocusIndex >= order.length) state.homeFocusIndex = order.length - 1;
+    if(state.homeFocusIndex < 0) state.homeFocusIndex = 0;
+    return order[state.homeFocusIndex];
+  }
+
   // ---------- softkey actions (context-dependent) ----------
   function doLeftAction(){
-    var el = document.activeElement;
     if(state.screen === "home"){
-      var cat = (el && el.dataset) ? el.dataset.cat : null;
-      pushScreen("form", {editId: null, category: cat || ""});
-    } else if(state.screen === "list"){
-      var bmId = (el && el.dataset) ? el.dataset.id : null;
-      pushScreen("optionsMenu", {category: state.ctx.category, bookmarkId: bmId || null});
+      var item = currentHomeItem();
+      if(item && (item.type === "catTile" || item.type === "inlineBookmark")){
+        pushScreen("optionsMenu", {category: item.cat, bookmarkId: item.type === "inlineBookmark" ? item.id : null});
+      } else if(item && item.type === "appTile"){
+        pushScreen("optionsMenu", {category: APP_CAT, bookmarkId: item.id});
+      } else {
+        pushScreen("optionsMenu", {category: APP_CAT, bookmarkId: null});
+      }
     } else if(state.screen === "form"){
       submitForm();
     } else if(state.screen === "confirm"){
       confirmYes();
+    } else if(state.screen === "optionsMenu"){
+      // no-op, left softkey has no distinct action here beyond OK-select
     }
   }
   function doRightAction(){
@@ -229,7 +312,13 @@
     var bm = findBookmark(id);
     state.data.bookmarks = state.data.bookmarks.filter(function(b){return b.id!==id;});
     saveData();
-    gotoList(bm ? bm.category : state.ctx.category);
+    if(bm && LIST_CAT_ORDER.indexOf(bm.category) !== -1){
+      state.homeExpandedCat = bm.category;
+    } else {
+      state.homeExpandedCat = null;
+    }
+    state.homeFocusIndex = 0;
+    gotoHome();
   }
 
   function submitForm(){
@@ -254,63 +343,93 @@
       state.data.bookmarks.push({id: genId(), name: name, url: url, category: category});
     }
     saveData();
-    gotoList(category);
+    if(LIST_CAT_ORDER.indexOf(category) === -1){
+      state.homeExpandedCat = null;
+    } else {
+      state.homeExpandedCat = category;
+    }
+    state.homeFocusIndex = 0;
+    gotoHome();
   }
 
   // ---------- rendering ----------
   function renderHome(){
-    var tilesHtml = CAT_ORDER.map(function(key, i){
-      var c = CATS[key];
-      var count = state.data.bookmarks.filter(function(b){return b.category===key;}).length;
-      return '<button class="tile navitem" data-action="openCategory" data-cat="' + key + '" data-idx="' + (i+1) + '" style="--tc:' + c.color + '">' +
+    var order = buildHomeFocusOrder();
+    if(state.homeFocusIndex >= order.length) state.homeFocusIndex = Math.max(0, order.length - 1);
+
+    var tilesHtml = LIST_CAT_ORDER.map(function(key, i){
+      var c = LIST_CATS[key];
+      var count = bookmarksIn(key).length;
+      var flatIdx = order.findIndex(function(o){ return o.type === "catTile" && o.cat === key; });
+      return '<button class="cat-tile navitem" data-flat="' + flatIdx + '" data-idx="' + (i+1) + '" style="--tc:' + c.color + '">' +
         '<span class="tile-badge">' + (i+1) + '</span>' +
         '<span class="tile-icon">' + c.icon + '</span>' +
-        '<span class="tile-label">' + c.label + '</span>' +
-        '<span class="tile-count">' + count + '</span>' +
+        '<span class="tile-text">' +
+          '<span class="tile-label">' + c.label + '</span>' +
+          '<span class="tile-count">' + count + '</span>' +
+        '</span>' +
       '</button>';
     }).join("");
+
+    var lowerHtml;
+    if(state.homeExpandedCat){
+      var meta = LIST_CATS[state.homeExpandedCat];
+      var bms = bookmarksIn(state.homeExpandedCat);
+      var rowsHtml;
+      if(bms.length === 0){
+        rowsHtml = '<div class="empty-msg">No ' + esc(meta.label.toLowerCase()) + ' yet.<br>Press "Options" to add one.</div>';
+      } else {
+        rowsHtml = bms.map(function(b){
+          var flatIdx = order.findIndex(function(o){ return o.type === "inlineBookmark" && o.id === b.id; });
+          var letter = esc((b.name || "?").charAt(0).toUpperCase());
+          var fav = faviconUrl(b.url);
+          var host = esc(hostOf(b.url));
+          return '<button class="navitem" data-flat="' + flatIdx + '" data-action="openBookmark" data-url="' + esc(b.url) + '" data-id="' + esc(b.id) + '">' +
+            '<span class="bm-row">' +
+              '<span class="icon-wrap" style="background:' + meta.color + '">' +
+                '<img class="favicon" src="' + esc(fav) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
+                '<span class="favicon-fallback" style="display:none;">' + letter + '</span>' +
+              '</span>' +
+              '<span class="bm-name">' + esc(b.name) + '<span class="bm-sub">' + host + '</span></span>' +
+            '</span>' +
+          '</button>';
+        }).join("");
+      }
+      lowerHtml = '<div class="inline-list-label">' + esc(meta.label) + '</div>' + rowsHtml;
+    } else {
+      var apps = bookmarksIn(APP_CAT);
+      var gridHtml;
+      if(apps.length === 0){
+        gridHtml = '<div class="app-empty-msg">No apps yet. Press "Options" to add one.</div>';
+      } else {
+        gridHtml = apps.map(function(b, i){
+          var flatIdx = order.findIndex(function(o){ return o.type === "appTile" && o.id === b.id; });
+          var letter = esc((b.name || "?").charAt(0).toUpperCase());
+          var fav = faviconUrl(b.url);
+          var idxLabel = i < 9 ? (i+1) : "";
+          return '<button class="app-tile navitem" data-flat="' + flatIdx + '" data-action="openBookmark" data-url="' + esc(b.url) + '" data-id="' + esc(b.id) + '">' +
+            (idxLabel ? '<span class="app-idx">' + idxLabel + '</span>' : '') +
+            '<span class="app-icon-wrap">' +
+              '<img class="app-favicon" src="' + esc(fav) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
+              '<span class="app-favicon-fallback" style="display:none;">' + letter + '</span>' +
+            '</span>' +
+            '<span class="app-tile-label">' + esc(b.name) + '</span>' +
+          '</button>';
+        }).join("");
+      }
+      lowerHtml = '<div class="app-grid">' + gridHtml + '</div>';
+    }
+
     return '<div class="header">Bookmarks</div>' +
       '<div class="content">' +
-        '<div class="tiles-wrap">' + tilesHtml + '</div>' +
-        '<div class="hint">Press 1-3, or arrow keys + OK, to open</div>' +
+        '<div class="cat-tiles-wrap">' + tilesHtml + '</div>' +
+        lowerHtml +
+        '<div class="hint">Arrows: move &middot; OK: open/expand</div>' +
       '</div>' +
-      '<div class="footer">' +
-        '<button class="sk" data-action="softLeft">Add</button>' +
-        '<span class="sk-center">OK: Open</span>' +
-        '<button class="sk" data-action="softRight">Exit</button>' +
-      '</div>';
-  }
-
-  function renderList(){
-    var cat = state.ctx.category;
-    var meta = CATS[cat] || {label: cat, color:"#ff8c00"};
-    var bms = state.data.bookmarks.filter(function(b){return b.category===cat;});
-    var itemsHtml;
-    if(bms.length === 0){
-      itemsHtml = '<div class="empty-msg">No bookmarks in &quot;' + esc(meta.label) + '&quot; yet.<br>Press "Options" to add one.</div>';
-    } else {
-      itemsHtml = bms.map(function(b, i){
-        var idxAttr = i < 9 ? (' data-idx="' + (i+1) + '"') : "";
-        var numLabel = i < 9 ? ((i+1) + ". ") : "";
-        var letter = esc((b.name || "?").charAt(0).toUpperCase());
-        var fav = faviconUrl(b.url);
-        return '<button class="navitem" data-action="openBookmark" data-url="' + esc(b.url) + '" data-id="' + esc(b.id) + '"' + idxAttr + '>' +
-          '<span class="bm-row">' +
-            '<span class="icon-wrap" style="background:' + meta.color + '">' +
-              '<img class="favicon" src="' + esc(fav) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
-              '<span class="favicon-fallback" style="display:none;">' + letter + '</span>' +
-            '</span>' +
-            '<span class="bm-name">' + numLabel + esc(b.name) + '</span>' +
-          '</span>' +
-        '</button>';
-      }).join("");
-    }
-    return '<div class="header" style="border-bottom-color:' + meta.color + '">&lsaquo; ' + esc(meta.label) + '</div>' +
-      '<div class="content">' + itemsHtml + '</div>' +
       '<div class="footer">' +
         '<button class="sk" data-action="softLeft">Options</button>' +
         '<span class="sk-center">OK: Open</span>' +
-        '<button class="sk" data-action="softRight">Back</button>' +
+        '<button class="sk" data-action="softRight">Exit</button>' +
       '</div>';
   }
 
@@ -325,8 +444,9 @@
     if(!preCat){
       catOptionsHtml += '<option value="" disabled selected>-- choose category --</option>';
     }
-    catOptionsHtml += CAT_ORDER.map(function(key){
-      return '<option value="' + key + '"' + (key===preCat?' selected':'') + '>' + esc(CATS[key].label) + '</option>';
+    catOptionsHtml += ALL_CAT_ORDER.map(function(key){
+      var label = LIST_CATS[key] ? LIST_CATS[key].label : key;
+      return '<option value="' + key + '"' + (key===preCat?' selected':'') + '>' + esc(label) + '</option>';
     }).join("");
 
     return '<div class="header">' + (editing ? "Edit" : "Add") + ' Bookmark</div>' +
@@ -349,7 +469,7 @@
   function renderOptionsMenu(){
     var ctx = state.ctx;
     var opts = [];
-    opts.push(["Add Bookmark", "goAddBookmark", {cat: ctx.category}]);
+    opts.push(["Add Bookmark", "goAddBookmark", {cat: ctx.category || ""}]);
     if(ctx.bookmarkId){
       opts.push(["Edit Bookmark", "goEditBookmark", {id: ctx.bookmarkId}]);
       opts.push(["Delete Bookmark", "goDeleteBookmark", {id: ctx.bookmarkId}]);
@@ -385,7 +505,6 @@
 
   var SCREEN_RENDERERS = {
     home: renderHome,
-    list: renderList,
     form: renderForm,
     optionsMenu: renderOptionsMenu,
     confirm: renderConfirm
@@ -393,15 +512,27 @@
 
   function render(){
     document.getElementById("app").innerHTML = SCREEN_RENDERERS[state.screen]();
-    focusFirst();
+    focusCurrent();
   }
 
-  function focusFirst(){
+  function focusCurrent(){
+    if(state.screen === "home"){
+      var el = document.querySelector('#app .content [data-flat="' + state.homeFocusIndex + '"]');
+      if(el){ el.focus(); if(el.scrollIntoView) el.scrollIntoView({block:"nearest"}); return; }
+    }
     var items = document.querySelectorAll("#app .content .navitem, #app .content input, #app .content select");
     if(items.length){ items[0].focus(); }
   }
 
   function moveFocus(dir){
+    if(state.screen === "home"){
+      var order = buildHomeFocusOrder();
+      if(order.length === 0) return;
+      state.homeFocusIndex = (state.homeFocusIndex + dir + order.length) % order.length;
+      // list screen keeps a "current" bookmark id in ctx.focusId for Options-on-focused-item
+      focusCurrent();
+      return;
+    }
     var items = Array.prototype.slice.call(
       document.querySelectorAll("#app .content .navitem, #app .content input, #app .content select")
     );
@@ -412,10 +543,50 @@
     if(items[idx].scrollIntoView){ items[idx].scrollIntoView({block: "nearest"}); }
   }
 
+  function activateHomeItem(item){
+    if(!item) return;
+    if(item.type === "catTile"){
+      // Selecting a category tile expands its list inline (replacing the app grid),
+      // or collapses it back to the app grid if already expanded.
+      if(state.homeExpandedCat === item.cat){
+        state.homeExpandedCat = null;
+      } else {
+        state.homeExpandedCat = item.cat;
+      }
+      // keep focus on the same tile
+      var order = buildHomeFocusOrder();
+      var idx = order.findIndex(function(o){ return o.type === "catTile" && o.cat === item.cat; });
+      state.homeFocusIndex = idx === -1 ? 0 : idx;
+      render();
+    } else if(item.type === "inlineBookmark" || item.type === "appTile"){
+      var bm = findBookmark(item.id);
+      if(bm) openURL(bm.url);
+    }
+  }
+
   function digitSelect(n){
+    if(state.screen === "home"){
+      // 1/2 always select the top category tiles regardless of expanded state
+      if(n === 1){ state.homeFocusIndex = 0; activateHomeItem({type:"catTile", cat:LIST_CAT_ORDER[0]}); return; }
+      if(n === 2){ state.homeFocusIndex = 1; activateHomeItem({type:"catTile", cat:LIST_CAT_ORDER[1]}); return; }
+      var order = buildHomeFocusOrder();
+      var target = order.filter(function(o){ return o.type === "appTile"; })[n - 3];
+      if(!state.homeExpandedCat && target){
+        var idx = order.indexOf(target);
+        state.homeFocusIndex = idx;
+        activateHomeItem(target);
+      }
+      return;
+    }
     var items = Array.prototype.slice.call(document.querySelectorAll("#app .content .navitem[data-idx]"));
     var el = items.filter(function(i){ return Number(i.dataset.idx) === n; })[0];
     if(el){ el.focus(); el.click(); }
+  }
+
+  function handleOk(){
+    if(state.screen === "home"){
+      activateHomeItem(currentHomeItem());
+    }
   }
 
   // ---------- event delegation ----------
@@ -429,7 +600,6 @@
       var action = btn.dataset.action;
       var bm;
       switch(action){
-        case "openCategory": pushScreen("list", {category: btn.dataset.cat}); break;
         case "openBookmark": openURL(btn.dataset.url); break;
         case "softLeft": doLeftAction(); break;
         case "softRight": doRightAction(); break;
@@ -445,6 +615,20 @@
         case "confirmYes": confirmYes(); break;
         case "confirmNo": goBack(); break;
       }
+      if(btn.classList.contains("cat-tile") && action !== "softLeft" && action !== "softRight"){
+        // clicking a cat-tile itself (no data-action) falls through below
+      }
+    });
+
+    // clicking a cat-tile (no data-action attr, just navitem) toggles inline expansion
+    document.getElementById("app").addEventListener("click", function(e){
+      var tile = e.target.closest ? e.target.closest(".cat-tile") : null;
+      if(!tile) return;
+      var flat = Number(tile.dataset.flat);
+      var order = buildHomeFocusOrder();
+      var item = order[flat];
+      state.homeFocusIndex = flat;
+      activateHomeItem(item);
     });
 
     document.addEventListener("keydown", function(e){
@@ -464,17 +648,26 @@
           if(!inText){ e.preventDefault(); doRightAction(); }
           break;
         case "ArrowDown":
+          if(inSelect) break;
+          e.preventDefault();
+          if(state.screen === "home"){ moveFocus(3); } else { moveFocus(1); }
+          break;
+        case "ArrowUp":
+          if(inSelect) break;
+          e.preventDefault();
+          if(state.screen === "home"){ moveFocus(-3); } else { moveFocus(-1); }
+          break;
         case "ArrowRight":
           if(inSelect) break;
-          if(e.key === "ArrowRight" && inText) break;
+          if(inText) break;
           e.preventDefault(); moveFocus(1); break;
-        case "ArrowUp":
         case "ArrowLeft":
           if(inSelect) break;
-          if(e.key === "ArrowLeft" && inText) break;
+          if(inText) break;
           e.preventDefault(); moveFocus(-1); break;
         case "Enter":
-          if(inSelect){ e.preventDefault(); moveFocus(1); }
+          if(inSelect){ e.preventDefault(); moveFocus(1); break; }
+          if(state.screen === "home" && !inText){ e.preventDefault(); handleOk(); }
           break;
         default:
           if(!inText && !inSelect && /^[1-9]$/.test(e.key)){ digitSelect(Number(e.key)); }
@@ -489,4 +682,3 @@
 </script>
 </body>
 </html>
-
