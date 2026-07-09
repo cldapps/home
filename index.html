@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Bookmarks</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0d0d0d">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; height:100%; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background:#0d0d0d; color:#f2f2f2;
+    height:100vh; overflow:hidden;
+    font-size:15px;
+  }
+  #app { display:flex; flex-direction:column; height:100%; }
+
+  .header {
+    flex:0 0 auto; padding:9px 10px; background:#1a1a1a;
+    border-bottom:3px solid #ff8c00; font-weight:bold; font-size:16px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+
+  .content { flex:1 1 auto; overflow-y:auto; padding:6px 8px; }
+
+  /* ---- generic list item ---- */
+  button.navitem, .navitem {
+    display:block; width:100%; text-align:left; background:#161616; color:#f2f2f2;
+    border:1px solid #2a2a2a; border-radius:8px; padding:11px 10px; margin:0 0 7px 0;
+    font-size:15px; font-family:inherit; line-height:1.3;
+  }
+  .navitem:focus { background:#ff8c00; color:#111; outline:none; border-color:#ff8c00; font-weight:bold; }
+
+  /* ---- home screen tiles ---- */
+  .tiles-wrap { display:flex; gap:10px; padding:14px 10px 4px; }
+  .tile {
+    flex:1 1 0; height:94px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:5px; border-radius:20px; border:2px solid var(--tc); background:#141414;
+    position:relative; padding:6px 4px; margin:0;
+  }
+  .tile:focus { background:var(--tc); }
+  .tile-badge {
+    position:absolute; top:5px; left:6px; font-size:10px; font-weight:bold;
+    background:var(--tc); color:#0d0d0d; width:16px; height:16px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .tile:focus .tile-badge { background:#0d0d0d; color:var(--tc); }
+  .tile-icon { font-size:25px; font-weight:bold; color:var(--tc); }
+  .tile:focus .tile-icon { color:#0d0d0d; }
+  .tile-label { font-size:12px; font-weight:bold; color:#f2f2f2; }
+  .tile:focus .tile-label { color:#0d0d0d; }
+  .tile-count { font-size:10px; color:#888; }
+  .tile:focus .tile-count { color:#222; }
+  .hint { text-align:center; color:#777; font-size:11px; margin-top:14px; padding:0 10px; }
+
+  /* ---- bookmark row with favicon ---- */
+  .bm-row { display:flex; align-items:center; gap:10px; width:100%; }
+  .icon-wrap { flex:0 0 auto; width:28px; height:28px; border-radius:7px; overflow:hidden; position:relative; background:#333; }
+  .favicon { width:28px; height:28px; object-fit:cover; display:block; }
+  .favicon-fallback {
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    font-weight:bold; font-size:13px; color:#0d0d0d;
+  }
+  .bm-name { flex:1 1 auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .content label { display:block; font-size:12px; color:#999; margin:9px 0 3px; }
+  .content input, .content select {
+    display:block; width:100%; padding:10px; margin-bottom:2px;
+    background:#1a1a1a; border:1px solid #444; color:#fff; border-radius:7px;
+    font-size:15px; font-family:inherit;
+  }
+  .content input:focus, .content select:focus { border-color:#00caf2; outline:none; background:#111; }
+
+  .empty-msg { padding:26px 10px; text-align:center; color:#888; font-size:14px; line-height:1.5; }
+  .error-msg { color:#ff6b6b; font-size:13px; min-height:16px; margin-top:6px; }
+  .confirm-msg { padding:8px 2px 16px; font-size:15px; line-height:1.45; }
+
+  .footer {
+    flex:0 0 auto; display:flex; align-items:center; justify-content:space-between;
+    background:#1a1a1a; border-top:1px solid #333; padding:9px 10px; font-size:13px;
+  }
+  .sk { background:none; border:none; color:#00caf2; font-size:13px; padding:3px 4px; font-family:inherit; }
+  .sk:focus { outline:1px dotted #00caf2; }
+  .sk-center { color:#777; font-size:11px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "featurePhoneBookmarks_v2";
+
+  var CATS = {
+    Apps:    {label:"Apps",    color:"#ff8c00", icon:"A"},
+    Web:     {label:"Web",     color:"#00caf2", icon:"W"},
+    YouTube: {label:"YouTube", color:"#ff3b3b", icon:"Y"}
+  };
+  var CAT_ORDER = ["Apps", "Web", "YouTube"];
+
+  var DEFAULT_DATA = {
+    categories: CAT_ORDER.slice(),
+    bookmarks: [
+      {id:"d1", name:"Google", url:"https://www.google.com", category:"Web"},
+      {id:"d2", name:"Wikipedia", url:"https://www.wikipedia.org", category:"Web"},
+      {id:"d3", name:"BBC News", url:"https://www.bbc.com/news", category:"Web"},
+      {id:"d4", name:"Gmail", url:"https://mail.google.com", category:"Web"},
+      {id:"d5", name:"X (Twitter)", url:"https://x.com", category:"Apps"},
+      {id:"d6", name:"Facebook Lite", url:"https://mbasic.facebook.com", category:"Apps"},
+      {id:"d7", name:"Google Maps", url:"https://maps.google.com", category:"Apps"},
+      {id:"d8", name:"Spotify Web Player", url:"https://open.spotify.com", category:"Apps"},
+      {id:"d9", name:"YouTube Home", url:"https://www.youtube.com", category:"YouTube"},
+      {id:"d10", name:"MKBHD", url:"https://www.youtube.com/@mkbhd", category:"YouTube"},
+      {id:"d11", name:"Kurzgesagt", url:"https://www.youtube.com/@kurzgesagt", category:"YouTube"},
+      {id:"d12", name:"NASA", url:"https://www.youtube.com/@NASA", category:"YouTube"}
+    ]
+  };
+
+  var state = { screen: "home", ctx: {}, data: null };
+  var stack = [];
+
+  // ---------- storage ----------
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+
+  function migrateCategory(name){
+    if(name === "Websites") return "Web";
+    if(name === "PWAs") return "Apps";
+    if(name === "YouTube Channels") return "YouTube";
+    if(CAT_ORDER.indexOf(name) !== -1) return name;
+    return "Web";
+  }
+
+  function loadData(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){ state.data = JSON.parse(raw); }
+      else { state.data = clone(DEFAULT_DATA); }
+      if(!state.data.bookmarks) state.data.bookmarks = [];
+      state.data.bookmarks.forEach(function(b){ b.category = migrateCategory(b.category); });
+      state.data.categories = CAT_ORDER.slice();
+      saveData();
+    }catch(e){
+      state.data = clone(DEFAULT_DATA);
+    }
+  }
+  function saveData(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data)); }
+    catch(e){ console.warn("save failed", e); }
+  }
+
+  function genId(){ return "b" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function findBookmark(id){ return state.data.bookmarks.filter(function(b){return b.id===id;})[0]; }
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function faviconUrl(url){
+    var host = "";
+    try{ host = new URL(url).hostname; }catch(e){
+      var m = String(url).match(/^https?:\/\/([^\/]+)/i);
+      host = m ? m[1] : url;
+    }
+    return "https://www.google.com/s2/favicons?sz=64&domain=" + encodeURIComponent(host);
+  }
+
+  // ---------- navigation ----------
+  function pushScreen(screen, ctx){
+    stack.push({screen: state.screen, ctx: state.ctx});
+    state.screen = screen;
+    state.ctx = ctx || {};
+    render();
+  }
+  function goBack(){
+    if(stack.length === 0){
+      if(state.screen === "home"){ tryExit(); }
+      else { gotoHome(); }
+      return;
+    }
+    var prev = stack.pop();
+    state.screen = prev.screen;
+    state.ctx = prev.ctx;
+    render();
+  }
+  function gotoHome(){ stack = []; state.screen = "home"; state.ctx = {}; render(); }
+  function gotoList(category){ stack = []; state.screen = "list"; state.ctx = {category: category}; render(); }
+
+  function tryExit(){ try{ window.close(); }catch(e){} }
+
+  function openURL(url){
+    try{
+      var w = window.open(url, "_blank");
+      if(!w){ location.href = url; }
+    }catch(e){ location.href = url; }
+  }
+
+  function openConfirm(message, onYes){ pushScreen("confirm", {message: message, onYes: onYes}); }
+
+  // ---------- softkey actions (context-dependent) ----------
+  function doLeftAction(){
+    var el = document.activeElement;
+    if(state.screen === "home"){
+      var cat = (el && el.dataset) ? el.dataset.cat : null;
+      pushScreen("form", {editId: null, category: cat || ""});
+    } else if(state.screen === "list"){
+      var bmId = (el && el.dataset) ? el.dataset.id : null;
+      pushScreen("optionsMenu", {category: state.ctx.category, bookmarkId: bmId || null});
+    } else if(state.screen === "form"){
+      submitForm();
+    } else if(state.screen === "confirm"){
+      confirmYes();
+    }
+  }
+  function doRightAction(){
+    if(state.screen === "home"){ tryExit(); }
+    else { goBack(); }
+  }
+
+  function confirmYes(){ var cb = state.ctx.onYes; if(cb) cb(); }
+
+  // ---------- mutations ----------
+  function deleteBookmark(id){
+    var bm = findBookmark(id);
+    state.data.bookmarks = state.data.bookmarks.filter(function(b){return b.id!==id;});
+    saveData();
+    gotoList(bm ? bm.category : state.ctx.category);
+  }
+
+  function submitForm(){
+    var nameEl = document.getElementById("f-name");
+    var urlEl = document.getElementById("f-url");
+    var catEl = document.getElementById("f-category");
+    var errEl = document.getElementById("f-error");
+    var name = nameEl.value.trim();
+    var url = urlEl.value.trim();
+    var category = catEl ? catEl.value : "";
+
+    if(!name){ errEl.textContent = "Please enter a name."; nameEl.focus(); return; }
+    if(!url){ errEl.textContent = "Please enter a URL."; urlEl.focus(); return; }
+    if(!category){ errEl.textContent = "Please choose a category."; return; }
+
+    if(!/^https?:\/\//i.test(url)){ url = "https://" + url; }
+
+    if(state.ctx.editId){
+      var bm = findBookmark(state.ctx.editId);
+      if(bm){ bm.name = name; bm.url = url; bm.category = category; }
+    } else {
+      state.data.bookmarks.push({id: genId(), name: name, url: url, category: category});
+    }
+    saveData();
+    gotoList(category);
+  }
+
+  // ---------- rendering ----------
+  function renderHome(){
+    var tilesHtml = CAT_ORDER.map(function(key, i){
+      var c = CATS[key];
+      var count = state.data.bookmarks.filter(function(b){return b.category===key;}).length;
+      return '<button class="tile navitem" data-action="openCategory" data-cat="' + key + '" data-idx="' + (i+1) + '" style="--tc:' + c.color + '">' +
+        '<span class="tile-badge">' + (i+1) + '</span>' +
+        '<span class="tile-icon">' + c.icon + '</span>' +
+        '<span class="tile-label">' + c.label + '</span>' +
+        '<span class="tile-count">' + count + '</span>' +
+      '</button>';
+    }).join("");
+    return '<div class="header">Bookmarks</div>' +
+      '<div class="content">' +
+        '<div class="tiles-wrap">' + tilesHtml + '</div>' +
+        '<div class="hint">Press 1-3, or arrow keys + OK, to open</div>' +
+      '</div>' +
+      '<div class="footer">' +
+        '<button class="sk" data-action="softLeft">Add</button>' +
+        '<span class="sk-center">OK: Open</span>' +
+        '<button class="sk" data-action="softRight">Exit</button>' +
+      '</div>';
+  }
+
+  function renderList(){
+    var cat = state.ctx.category;
+    var meta = CATS[cat] || {label: cat, color:"#ff8c00"};
+    var bms = state.data.bookmarks.filter(function(b){return b.category===cat;});
+    var itemsHtml;
+    if(bms.length === 0){
+      itemsHtml = '<div class="empty-msg">No bookmarks in &quot;' + esc(meta.label) + '&quot; yet.<br>Press "Options" to add one.</div>';
+    } else {
+      itemsHtml = bms.map(function(b, i){
+        var idxAttr = i < 9 ? (' data-idx="' + (i+1) + '"') : "";
+        var numLabel = i < 9 ? ((i+1) + ". ") : "";
+        var letter = esc((b.name || "?").charAt(0).toUpperCase());
+        var fav = faviconUrl(b.url);
+        return '<button class="navitem" data-action="openBookmark" data-url="' + esc(b.url) + '" data-id="' + esc(b.id) + '"' + idxAttr + '>' +
+          '<span class="bm-row">' +
+            '<span class="icon-wrap" style="background:' + meta.color + '">' +
+              '<img class="favicon" src="' + esc(fav) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
+              '<span class="favicon-fallback" style="display:none;">' + letter + '</span>' +
+            '</span>' +
+            '<span class="bm-name">' + numLabel + esc(b.name) + '</span>' +
+          '</span>' +
+        '</button>';
+      }).join("");
+    }
+    return '<div class="header" style="border-bottom-color:' + meta.color + '">&lsaquo; ' + esc(meta.label) + '</div>' +
+      '<div class="content">' + itemsHtml + '</div>' +
+      '<div class="footer">' +
+        '<button class="sk" data-action="softLeft">Options</button>' +
+        '<span class="sk-center">OK: Open</span>' +
+        '<button class="sk" data-action="softRight">Back</button>' +
+      '</div>';
+  }
+
+  function renderForm(){
+    var editing = !!state.ctx.editId;
+    var bm = editing ? findBookmark(state.ctx.editId) : null;
+    var name = bm ? bm.name : "";
+    var url = bm ? bm.url : "";
+    var preCat = bm ? bm.category : (state.ctx.category || "");
+
+    var catOptionsHtml = "";
+    if(!preCat){
+      catOptionsHtml += '<option value="" disabled selected>-- choose category --</option>';
+    }
+    catOptionsHtml += CAT_ORDER.map(function(key){
+      return '<option value="' + key + '"' + (key===preCat?' selected':'') + '>' + esc(CATS[key].label) + '</option>';
+    }).join("");
+
+    return '<div class="header">' + (editing ? "Edit" : "Add") + ' Bookmark</div>' +
+      '<div class="content">' +
+        '<label>Name</label>' +
+        '<input id="f-name" type="text" value="' + esc(name) + '" placeholder="e.g. Google">' +
+        '<label>URL</label>' +
+        '<input id="f-url" type="text" value="' + esc(url) + '" placeholder="example.com">' +
+        '<label>Category</label>' +
+        '<select id="f-category">' + catOptionsHtml + '</select>' +
+        '<div id="f-error" class="error-msg"></div>' +
+      '</div>' +
+      '<div class="footer">' +
+        '<button class="sk" data-action="softLeft">Save</button>' +
+        '<span class="sk-center"></span>' +
+        '<button class="sk" data-action="softRight">Cancel</button>' +
+      '</div>';
+  }
+
+  function renderOptionsMenu(){
+    var ctx = state.ctx;
+    var opts = [];
+    opts.push(["Add Bookmark", "goAddBookmark", {cat: ctx.category}]);
+    if(ctx.bookmarkId){
+      opts.push(["Edit Bookmark", "goEditBookmark", {id: ctx.bookmarkId}]);
+      opts.push(["Delete Bookmark", "goDeleteBookmark", {id: ctx.bookmarkId}]);
+    }
+    var itemsHtml = opts.map(function(o){
+      var label = o[0], action = o[1], data = o[2];
+      var dataAttrs = Object.keys(data).map(function(k){ return 'data-' + k + '="' + esc(data[k]) + '"'; }).join(" ");
+      return '<button class="navitem" data-action="' + action + '" ' + dataAttrs + '>' + esc(label) + '</button>';
+    }).join("");
+    return '<div class="header">Options</div>' +
+      '<div class="content">' + itemsHtml + '</div>' +
+      '<div class="footer">' +
+        '<span class="sk"></span>' +
+        '<span class="sk-center">OK: Select</span>' +
+        '<button class="sk" data-action="softRight">Back</button>' +
+      '</div>';
+  }
+
+  function renderConfirm(){
+    var msg = state.ctx.message;
+    return '<div class="header">Confirm</div>' +
+      '<div class="content">' +
+        '<div class="confirm-msg">' + esc(msg) + '</div>' +
+        '<button class="navitem" data-action="confirmNo">No, cancel</button>' +
+        '<button class="navitem" data-action="confirmYes">Yes, continue</button>' +
+      '</div>' +
+      '<div class="footer">' +
+        '<button class="sk" data-action="softLeft">Yes</button>' +
+        '<span class="sk-center"></span>' +
+        '<button class="sk" data-action="softRight">No</button>' +
+      '</div>';
+  }
+
+  var SCREEN_RENDERERS = {
+    home: renderHome,
+    list: renderList,
+    form: renderForm,
+    optionsMenu: renderOptionsMenu,
+    confirm: renderConfirm
+  };
+
+  function render(){
+    document.getElementById("app").innerHTML = SCREEN_RENDERERS[state.screen]();
+    focusFirst();
+  }
+
+  function focusFirst(){
+    var items = document.querySelectorAll("#app .content .navitem, #app .content input, #app .content select");
+    if(items.length){ items[0].focus(); }
+  }
+
+  function moveFocus(dir){
+    var items = Array.prototype.slice.call(
+      document.querySelectorAll("#app .content .navitem, #app .content input, #app .content select")
+    );
+    if(items.length === 0) return;
+    var idx = items.indexOf(document.activeElement);
+    if(idx === -1){ idx = 0; } else { idx = (idx + dir + items.length) % items.length; }
+    items[idx].focus();
+    if(items[idx].scrollIntoView){ items[idx].scrollIntoView({block: "nearest"}); }
+  }
+
+  function digitSelect(n){
+    var items = Array.prototype.slice.call(document.querySelectorAll("#app .content .navitem[data-idx]"));
+    var el = items.filter(function(i){ return Number(i.dataset.idx) === n; })[0];
+    if(el){ el.focus(); el.click(); }
+  }
+
+  // ---------- event delegation ----------
+  document.addEventListener("DOMContentLoaded", function(){
+    loadData();
+    render();
+
+    document.getElementById("app").addEventListener("click", function(e){
+      var btn = e.target.closest ? e.target.closest("[data-action]") : null;
+      if(!btn) return;
+      var action = btn.dataset.action;
+      var bm;
+      switch(action){
+        case "openCategory": pushScreen("list", {category: btn.dataset.cat}); break;
+        case "openBookmark": openURL(btn.dataset.url); break;
+        case "softLeft": doLeftAction(); break;
+        case "softRight": doRightAction(); break;
+        case "goAddBookmark": pushScreen("form", {editId: null, category: btn.dataset.cat || ""}); break;
+        case "goEditBookmark":
+          bm = findBookmark(btn.dataset.id);
+          if(bm) pushScreen("form", {editId: bm.id, category: bm.category});
+          break;
+        case "goDeleteBookmark":
+          bm = findBookmark(btn.dataset.id);
+          if(bm) openConfirm('Delete "' + bm.name + '"?', function(){ deleteBookmark(bm.id); });
+          break;
+        case "confirmYes": confirmYes(); break;
+        case "confirmNo": goBack(); break;
+      }
+    });
+
+    document.addEventListener("keydown", function(e){
+      var ae = document.activeElement;
+      var tag = ae ? ae.tagName : "";
+      var inText = (tag === "INPUT" || tag === "TEXTAREA");
+      var inSelect = (tag === "SELECT");
+
+      switch(e.key){
+        case "SoftLeft":
+          e.preventDefault(); doLeftAction(); break;
+        case "SoftRight":
+          e.preventDefault(); doRightAction(); break;
+        case "Escape":
+          e.preventDefault(); doRightAction(); break;
+        case "Backspace":
+          if(!inText){ e.preventDefault(); doRightAction(); }
+          break;
+        case "ArrowDown":
+        case "ArrowRight":
+          if(inSelect) break;
+          if(e.key === "ArrowRight" && inText) break;
+          e.preventDefault(); moveFocus(1); break;
+        case "ArrowUp":
+        case "ArrowLeft":
+          if(inSelect) break;
+          if(e.key === "ArrowLeft" && inText) break;
+          e.preventDefault(); moveFocus(-1); break;
+        case "Enter":
+          if(inSelect){ e.preventDefault(); moveFocus(1); }
+          break;
+        default:
+          if(!inText && !inSelect && /^[1-9]$/.test(e.key)){ digitSelect(Number(e.key)); }
+      }
+    });
+
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("./sw.js").catch(function(){});
+    }
+  });
+})();
+</script>
+</body>
+</html>
+
