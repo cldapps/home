@@ -9,115 +9,114 @@
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin:0; padding:0; height:100%; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; min-width: 0; }
+  html, body { margin:0; padding:0; height:100%; width:100%; overflow-x:hidden; }
   body {
     font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     background:#0d0d0d; color:#f2f2f2;
     height:100vh; overflow:hidden;
-    font-size:13px;
+    font-size:12px;
   }
-  #app { display:flex; flex-direction:column; height:100%; }
+  #app { display:flex; flex-direction:column; height:100%; width:100%; max-width:100vw; overflow:hidden; }
 
   .header {
-    flex:0 0 auto; padding:6px 8px; background:#1a1a1a;
-    border-bottom:2px solid #ff8c00; font-weight:bold; font-size:13px;
+    flex:0 0 auto; padding:5px 7px; background:#1a1a1a;
+    border-bottom:2px solid #ff8c00; font-weight:bold; font-size:12px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
 
-  .content { flex:1 1 auto; overflow-y:auto; padding:5px 6px; }
+  .content { flex:1 1 auto; overflow-y:auto; overflow-x:hidden; padding:4px 6px; width:100%; }
 
-  /* ---- generic list item (compact) ---- */
+  /* ---- generic slim list item ---- */
   button.navitem, .navitem {
     display:block; width:100%; text-align:left; background:#161616; color:#f2f2f2;
-    border:1px solid #2a2a2a; border-radius:6px; padding:6px 8px; margin:0 0 4px 0;
-    font-size:13px; font-family:inherit; line-height:1.25;
+    border:1px solid #2a2a2a; border-radius:6px; padding:5px 7px; margin:0 0 3px 0;
+    font-size:12px; font-family:inherit; line-height:1.2;
   }
   .navitem:focus { background:#ff8c00; color:#111; outline:none; border-color:#ff8c00; font-weight:bold; }
-  .navitem .bm-sub { display:block; font-size:10px; color:#999; font-weight:normal; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .navitem .bm-sub { display:block; font-size:9px; color:#999; font-weight:normal; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:1px; }
   .navitem:focus .bm-sub { color:#3a2200; }
 
-  /* ---- home: top category tiles (rectangular, wider than app icons) ---- */
-  .cat-tiles-wrap { display:flex; gap:6px; padding:2px 0 8px; }
+  /* ---- home: top category cards -- BIG, rectangular, the visual anchor ---- */
+  .cat-tiles-wrap { display:flex; gap:6px; padding:2px 0 7px; width:100%; }
   .cat-tile {
-    flex:1 1 0; height:46px; display:flex; align-items:center; justify-content:center; gap:6px;
-    border-radius:10px; border:2px solid var(--tc); background:#141414;
-    padding:4px 6px; margin:0; position:relative;
+    flex:1 1 0; height:60px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px; border-radius:14px; border:2px solid var(--tc); background:#141414;
+    padding:4px 5px; margin:0; position:relative; width:100%;
   }
   .cat-tile:focus { background:var(--tc); }
   .cat-tile .tile-badge {
-    position:absolute; top:3px; left:5px; font-size:9px; font-weight:bold;
-    background:var(--tc); color:#0d0d0d; width:13px; height:13px; border-radius:50%;
+    position:absolute; top:4px; left:6px; font-size:9px; font-weight:bold;
+    background:var(--tc); color:#0d0d0d; width:14px; height:14px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
   }
   .cat-tile:focus .tile-badge { background:#0d0d0d; color:var(--tc); }
-  .cat-tile .tile-icon { font-size:17px; font-weight:bold; color:var(--tc); flex:0 0 auto; }
+  .cat-tile .tile-icon { font-size:22px; font-weight:bold; color:var(--tc); line-height:1; }
   .cat-tile:focus .tile-icon { color:#0d0d0d; }
-  .cat-tile .tile-text { display:flex; flex-direction:column; align-items:flex-start; min-width:0; }
-  .cat-tile .tile-label { font-size:11px; font-weight:bold; color:#f2f2f2; white-space:nowrap; }
+  .cat-tile .tile-label { font-size:12.5px; font-weight:bold; color:#f2f2f2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   .cat-tile:focus .tile-label { color:#0d0d0d; }
-  .cat-tile .tile-count { font-size:9px; color:#888; }
+  .cat-tile .tile-count { font-size:9.5px; color:#888; }
   .cat-tile:focus .tile-count { color:#222; }
 
-  /* ---- home: inline expanded list under a focused category tile ---- */
-  .inline-list-label { font-size:10px; color:#888; margin:0 0 4px 2px; text-transform:uppercase; letter-spacing:.03em; }
+  /* ---- home: inline expanded list label ---- */
+  .inline-list-label { font-size:9.5px; color:#888; margin:0 0 3px 2px; text-transform:uppercase; letter-spacing:.03em; }
 
-  /* ---- home: app grid (bigger, rounder-square icons) ---- */
-  .app-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:7px; padding-top:2px; }
+  /* ---- home: app grid -- small, dense, clearly smaller than cat cards ---- */
+  .app-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; padding-top:1px; width:100%; }
   .app-tile {
     aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:4px; border-radius:16px; border:1px solid #2f2f2f; background:#161616; padding:4px;
-    position:relative; margin:0;
+    gap:2px; border-radius:11px; border:1px solid #2f2f2f; background:#161616; padding:3px;
+    position:relative; margin:0; width:100%;
   }
   .app-tile:focus { background:#ff8c00; border-color:#ff8c00; outline:none; }
   .app-tile .app-idx {
-    position:absolute; top:3px; left:5px; font-size:9px; color:#666; font-weight:bold;
+    position:absolute; top:2px; left:4px; font-size:8px; color:#666; font-weight:bold;
   }
   .app-tile:focus .app-idx { color:#3a2200; }
-  .app-icon-wrap { width:30px; height:30px; border-radius:9px; overflow:hidden; position:relative; background:#333; flex:0 0 auto; }
-  .app-favicon { width:30px; height:30px; object-fit:cover; display:block; }
+  .app-icon-wrap { width:20px; height:20px; border-radius:6px; overflow:hidden; position:relative; background:#333; flex:0 0 auto; }
+  .app-favicon { width:20px; height:20px; object-fit:cover; display:block; }
   .app-favicon-fallback {
     position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-    font-weight:bold; font-size:13px; color:#0d0d0d; background:#555;
+    font-weight:bold; font-size:10px; color:#0d0d0d; background:#555;
   }
   .app-tile-label {
-    font-size:9.5px; font-weight:600; color:#ddd; text-align:center; width:100%;
+    font-size:8px; font-weight:600; color:#ddd; text-align:center; width:100%;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   .app-tile:focus .app-tile-label { color:#111; }
-  .app-empty-msg { grid-column:1/-1; padding:14px 4px; text-align:center; color:#777; font-size:11px; }
+  .app-empty-msg { grid-column:1/-1; padding:12px 4px; text-align:center; color:#777; font-size:10.5px; }
 
-  .hint { text-align:center; color:#777; font-size:10px; margin-top:8px; padding:0 6px; }
+  .hint { text-align:center; color:#777; font-size:9.5px; margin-top:7px; padding:0 6px; }
 
-  /* ---- bookmark row with favicon (list screen + inline lists) ---- */
-  .bm-row { display:flex; align-items:center; gap:7px; width:100%; }
-  .icon-wrap { flex:0 0 auto; width:22px; height:22px; border-radius:6px; overflow:hidden; position:relative; background:#333; }
-  .favicon { width:22px; height:22px; object-fit:cover; display:block; }
+  /* ---- bookmark row with favicon (inline lists) ---- */
+  .bm-row { display:flex; align-items:center; gap:6px; width:100%; }
+  .icon-wrap { flex:0 0 auto; width:20px; height:20px; border-radius:5px; overflow:hidden; position:relative; background:#333; }
+  .favicon { width:20px; height:20px; object-fit:cover; display:block; }
   .favicon-fallback {
     position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-    font-weight:bold; font-size:11px; color:#0d0d0d;
+    font-weight:bold; font-size:10px; color:#0d0d0d;
   }
   .bm-name { flex:1 1 auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-  .content label { display:block; font-size:10.5px; color:#999; margin:6px 0 2px; }
+  .content label { display:block; font-size:10px; color:#999; margin:5px 0 2px; }
   .content input, .content select {
-    display:block; width:100%; padding:7px 8px; margin-bottom:1px;
+    display:block; width:100%; padding:6px 7px; margin-bottom:1px;
     background:#1a1a1a; border:1px solid #444; color:#fff; border-radius:6px;
-    font-size:13px; font-family:inherit;
+    font-size:12px; font-family:inherit;
   }
   .content input:focus, .content select:focus { border-color:#00caf2; outline:none; background:#111; }
 
-  .empty-msg { padding:18px 8px; text-align:center; color:#888; font-size:12px; line-height:1.45; }
-  .error-msg { color:#ff6b6b; font-size:11px; min-height:14px; margin-top:4px; }
-  .confirm-msg { padding:6px 2px 12px; font-size:13px; line-height:1.4; }
+  .empty-msg { padding:14px 6px; text-align:center; color:#888; font-size:11px; line-height:1.4; }
+  .error-msg { color:#ff6b6b; font-size:10px; min-height:13px; margin-top:3px; }
+  .confirm-msg { padding:5px 2px 10px; font-size:12px; line-height:1.35; }
 
   .footer {
     flex:0 0 auto; display:flex; align-items:center; justify-content:space-between;
-    background:#1a1a1a; border-top:1px solid #333; padding:6px 8px; font-size:11px;
+    background:#1a1a1a; border-top:1px solid #333; padding:5px 7px; font-size:10px;
   }
-  .sk { background:none; border:none; color:#00caf2; font-size:11px; padding:2px 3px; font-family:inherit; }
+  .sk { background:none; border:none; color:#00caf2; font-size:10px; padding:2px 3px; font-family:inherit; }
   .sk:focus { outline:1px dotted #00caf2; }
-  .sk-center { color:#777; font-size:9.5px; }
+  .sk-center { color:#777; font-size:9px; }
 </style>
 </head>
 <body>
@@ -127,18 +126,18 @@
 (function(){
   "use strict";
 
-  var STORAGE_KEY = "featurePhoneBookmarks_v3";
+  var STORAGE_KEY = "featurePhoneBookmarks_v4";
 
-  // Top-level categories shown as list-type sections (rectangular tiles + inline expandable list)
+  // Top-level categories shown as big cards + inline expandable list
   var LIST_CATS = {
     Web:     {label:"Websites", color:"#00caf2", icon:"W"},
     YouTube: {label:"Channels", color:"#ff3b3b", icon:"Y"}
   };
   var LIST_CAT_ORDER = ["Web", "YouTube"];
 
-  // Apps live directly on the home grid, not behind a tile
   var APP_CAT = "Apps";
-  var ALL_CAT_ORDER = ["Apps", "Web", "YouTube"]; // used for form category choices + migration
+  var APP_GRID_COLS = 4;
+  var ALL_CAT_ORDER = ["Apps", "Web", "YouTube"];
 
   var DEFAULT_DATA = {
     categories: ALL_CAT_ORDER.slice(),
@@ -159,10 +158,9 @@
   };
 
   // state.screen: "home" | "form" | "optionsMenu" | "confirm"
-  // state.ctx: screen-specific context
-  // state.homeFocusIndex: index into the flattened home focus-order array (persisted while on home)
-  // state.homeExpandedCat: which LIST_CAT (if any) is currently expanded inline on home
-  var state = { screen: "home", ctx: {}, data: null, homeFocusIndex: 0, homeExpandedCat: null };
+  // Home navigation uses a row/column grid model (one unambiguous cursor position),
+  // NOT a flat index with an assumed stride -- that's what caused the conflicts before.
+  var state = { screen: "home", ctx: {}, data: null, homeRow: 0, homeCol: 0, homeExpandedCat: null };
   var stack = [];
 
   // ---------- storage ----------
@@ -181,8 +179,7 @@
       var raw = localStorage.getItem(STORAGE_KEY);
       if(raw){ state.data = JSON.parse(raw); }
       else {
-        // try migrating from older key
-        var oldRaw = localStorage.getItem("featurePhoneBookmarks_v2");
+        var oldRaw = localStorage.getItem("featurePhoneBookmarks_v3") || localStorage.getItem("featurePhoneBookmarks_v2");
         state.data = oldRaw ? JSON.parse(oldRaw) : clone(DEFAULT_DATA);
       }
       if(!state.data.bookmarks) state.data.bookmarks = [];
@@ -216,7 +213,7 @@
     return "https://www.google.com/s2/favicons?sz=64&domain=" + encodeURIComponent(hostOf(url));
   }
 
-  // ---------- navigation ----------
+  // ---------- navigation (screens) ----------
   function pushScreen(screen, ctx){
     stack.push({screen: state.screen, ctx: state.ctx});
     state.screen = screen;
@@ -247,57 +244,125 @@
 
   function openConfirm(message, onYes){ pushScreen("confirm", {message: message, onYes: onYes}); }
 
-  // ---------- home focus model ----------
-  // Builds a flat ordered list describing every focusable item on the home screen,
-  // so softkeys/keys can act on "whatever is currently focused" reliably instead of
-  // guessing from DOM dataset attributes.
-  function buildHomeFocusOrder(){
-    var order = [];
-    LIST_CAT_ORDER.forEach(function(key){
-      order.push({type:"catTile", cat:key});
-    });
+  // ---------- home grid model ----------
+  // Builds an explicit 2D grid of rows (each row = array of items). Row 0 is always
+  // the two category cards. Every subsequent row is either one list item (when a
+  // category is expanded) or up to APP_GRID_COLS app tiles (when collapsed).
+  // This single structure drives rendering, arrow-key movement, AND digit shortcuts,
+  // so there is exactly one numbering/position scheme active at any moment.
+  function buildHomeRows(){
+    var rows = [];
+    rows.push(LIST_CAT_ORDER.map(function(key){ return {type:"catTile", cat:key}; }));
+
     if(state.homeExpandedCat){
-      bookmarksIn(state.homeExpandedCat).forEach(function(b){
-        order.push({type:"inlineBookmark", cat:state.homeExpandedCat, id:b.id});
-      });
+      var bms = bookmarksIn(state.homeExpandedCat);
+      if(bms.length === 0){
+        rows.push([{type:"inlineEmpty"}]);
+      } else {
+        bms.forEach(function(b){
+          rows.push([{type:"inlineBookmark", cat:state.homeExpandedCat, id:b.id}]);
+        });
+      }
     } else {
       var apps = bookmarksIn(APP_CAT);
       if(apps.length === 0){
-        order.push({type:"appEmpty"});
+        rows.push([{type:"appEmpty"}]);
       } else {
-        apps.forEach(function(b){
-          order.push({type:"appTile", id:b.id});
-        });
+        for(var i=0; i<apps.length; i+=APP_GRID_COLS){
+          rows.push(apps.slice(i, i+APP_GRID_COLS).map(function(b){ return {type:"appTile", id:b.id}; }));
+        }
       }
     }
-    return order;
+    return rows;
+  }
+
+  function flattenRows(rows){
+    var flat = [];
+    rows.forEach(function(row, r){
+      row.forEach(function(item, c){ flat.push({row:r, col:c, item:item}); });
+    });
+    return flat;
+  }
+
+  function clampHomeCursor(rows){
+    if(rows.length === 0){ state.homeRow = 0; state.homeCol = 0; return; }
+    if(state.homeRow >= rows.length) state.homeRow = rows.length - 1;
+    if(state.homeRow < 0) state.homeRow = 0;
+    var rowLen = rows[state.homeRow].length;
+    if(state.homeCol >= rowLen) state.homeCol = rowLen - 1;
+    if(state.homeCol < 0) state.homeCol = 0;
   }
 
   function currentHomeItem(){
-    var order = buildHomeFocusOrder();
-    if(order.length === 0) return null;
-    if(state.homeFocusIndex >= order.length) state.homeFocusIndex = order.length - 1;
-    if(state.homeFocusIndex < 0) state.homeFocusIndex = 0;
-    return order[state.homeFocusIndex];
+    var rows = buildHomeRows();
+    clampHomeCursor(rows);
+    return rows[state.homeRow][state.homeCol];
+  }
+
+  function homeMove(dir){
+    var rows = buildHomeRows();
+    clampHomeCursor(rows);
+    if(dir === "down"){
+      if(state.homeRow < rows.length - 1){
+        state.homeRow++;
+        state.homeCol = Math.min(state.homeCol, rows[state.homeRow].length - 1);
+      }
+    } else if(dir === "up"){
+      if(state.homeRow > 0){
+        state.homeRow--;
+        state.homeCol = Math.min(state.homeCol, rows[state.homeRow].length - 1);
+      }
+    } else if(dir === "right"){
+      if(state.homeCol < rows[state.homeRow].length - 1){ state.homeCol++; }
+    } else if(dir === "left"){
+      if(state.homeCol > 0){ state.homeCol--; }
+    }
+    render();
+  }
+
+  function homeDigitSelect(n){
+    var rows = buildHomeRows();
+    var flat = flattenRows(rows);
+    var target = flat[n - 1];
+    if(!target) return;
+    state.homeRow = target.row;
+    state.homeCol = target.col;
+    activateHomeItem(target.item);
+  }
+
+  function activateHomeItem(item){
+    if(!item) return;
+    if(item.type === "catTile"){
+      // Toggle inline expansion. Row 0 (the two cards) never changes shape,
+      // so the cursor position (row/col) stays valid without any lookup.
+      state.homeExpandedCat = (state.homeExpandedCat === item.cat) ? null : item.cat;
+      render();
+    } else if(item.type === "inlineBookmark" || item.type === "appTile"){
+      var bm = findBookmark(item.id);
+      if(bm) openURL(bm.url);
+    }
+  }
+
+  function handleOk(){
+    if(state.screen === "home"){ activateHomeItem(currentHomeItem()); }
   }
 
   // ---------- softkey actions (context-dependent) ----------
   function doLeftAction(){
     if(state.screen === "home"){
       var item = currentHomeItem();
-      if(item && (item.type === "catTile" || item.type === "inlineBookmark")){
-        pushScreen("optionsMenu", {category: item.cat, bookmarkId: item.type === "inlineBookmark" ? item.id : null});
-      } else if(item && item.type === "appTile"){
-        pushScreen("optionsMenu", {category: APP_CAT, bookmarkId: item.id});
-      } else {
-        pushScreen("optionsMenu", {category: APP_CAT, bookmarkId: null});
+      var category = APP_CAT, bookmarkId = null;
+      if(item){
+        if(item.type === "catTile"){ category = item.cat; bookmarkId = null; }
+        else if(item.type === "inlineBookmark"){ category = item.cat; bookmarkId = item.id; }
+        else if(item.type === "appTile"){ category = APP_CAT; bookmarkId = item.id; }
+        else if(item.type === "inlineEmpty"){ category = state.homeExpandedCat || APP_CAT; bookmarkId = null; }
       }
+      pushScreen("optionsMenu", {category: category, bookmarkId: bookmarkId});
     } else if(state.screen === "form"){
       submitForm();
     } else if(state.screen === "confirm"){
       confirmYes();
-    } else if(state.screen === "optionsMenu"){
-      // no-op, left softkey has no distinct action here beyond OK-select
     }
   }
   function doRightAction(){
@@ -312,12 +377,8 @@
     var bm = findBookmark(id);
     state.data.bookmarks = state.data.bookmarks.filter(function(b){return b.id!==id;});
     saveData();
-    if(bm && LIST_CAT_ORDER.indexOf(bm.category) !== -1){
-      state.homeExpandedCat = bm.category;
-    } else {
-      state.homeExpandedCat = null;
-    }
-    state.homeFocusIndex = 0;
+    state.homeExpandedCat = (bm && LIST_CAT_ORDER.indexOf(bm.category) !== -1) ? bm.category : null;
+    state.homeRow = 0; state.homeCol = 0;
     gotoHome();
   }
 
@@ -343,59 +404,57 @@
       state.data.bookmarks.push({id: genId(), name: name, url: url, category: category});
     }
     saveData();
-    if(LIST_CAT_ORDER.indexOf(category) === -1){
-      state.homeExpandedCat = null;
-    } else {
-      state.homeExpandedCat = category;
-    }
-    state.homeFocusIndex = 0;
+    state.homeExpandedCat = (LIST_CAT_ORDER.indexOf(category) !== -1) ? category : null;
+    state.homeRow = 0; state.homeCol = 0;
     gotoHome();
   }
 
   // ---------- rendering ----------
   function renderHome(){
-    var order = buildHomeFocusOrder();
-    if(state.homeFocusIndex >= order.length) state.homeFocusIndex = Math.max(0, order.length - 1);
+    var rows = buildHomeRows();
+    clampHomeCursor(rows);
+    var flat = flattenRows(rows);
+    var idxMap = {};
+    flat.forEach(function(f, i){ if(i < 9) idxMap[f.row+"-"+f.col] = i+1; });
 
-    var tilesHtml = LIST_CAT_ORDER.map(function(key, i){
-      var c = LIST_CATS[key];
+    var tilesHtml = LIST_CAT_ORDER.map(function(key, c){
+      var meta = LIST_CATS[key];
       var count = bookmarksIn(key).length;
-      var flatIdx = order.findIndex(function(o){ return o.type === "catTile" && o.cat === key; });
-      return '<button class="cat-tile navitem" data-flat="' + flatIdx + '" data-idx="' + (i+1) + '" style="--tc:' + c.color + '">' +
-        '<span class="tile-badge">' + (i+1) + '</span>' +
-        '<span class="tile-icon">' + c.icon + '</span>' +
-        '<span class="tile-text">' +
-          '<span class="tile-label">' + c.label + '</span>' +
-          '<span class="tile-count">' + count + '</span>' +
-        '</span>' +
+      var badge = idxMap["0-"+c];
+      return '<button class="cat-tile navitem" data-action="homeSelect" data-row="0" data-col="' + c + '" data-cat="' + key + '" style="--tc:' + meta.color + '">' +
+        (badge ? '<span class="tile-badge">' + badge + '</span>' : '') +
+        '<span class="tile-icon">' + meta.icon + '</span>' +
+        '<span class="tile-label">' + esc(meta.label) + '</span>' +
+        '<span class="tile-count">' + count + '</span>' +
       '</button>';
     }).join("");
 
     var lowerHtml;
     if(state.homeExpandedCat){
-      var meta = LIST_CATS[state.homeExpandedCat];
+      var meta2 = LIST_CATS[state.homeExpandedCat];
       var bms = bookmarksIn(state.homeExpandedCat);
       var rowsHtml;
       if(bms.length === 0){
-        rowsHtml = '<div class="empty-msg">No ' + esc(meta.label.toLowerCase()) + ' yet.<br>Press "Options" to add one.</div>';
+        rowsHtml = '<div class="empty-msg">No ' + esc(meta2.label.toLowerCase()) + ' yet.<br>Press "Options" to add one.</div>';
       } else {
-        rowsHtml = bms.map(function(b){
-          var flatIdx = order.findIndex(function(o){ return o.type === "inlineBookmark" && o.id === b.id; });
+        rowsHtml = bms.map(function(b, i){
+          var r = i + 1, c = 0;
+          var badge = idxMap[r+"-"+c];
           var letter = esc((b.name || "?").charAt(0).toUpperCase());
           var fav = faviconUrl(b.url);
           var host = esc(hostOf(b.url));
-          return '<button class="navitem" data-flat="' + flatIdx + '" data-action="openBookmark" data-url="' + esc(b.url) + '" data-id="' + esc(b.id) + '">' +
+          return '<button class="navitem" data-action="openBookmark" data-row="' + r + '" data-col="' + c + '" data-url="' + esc(b.url) + '" data-id="' + esc(b.id) + '">' +
             '<span class="bm-row">' +
-              '<span class="icon-wrap" style="background:' + meta.color + '">' +
+              '<span class="icon-wrap" style="background:' + meta2.color + '">' +
                 '<img class="favicon" src="' + esc(fav) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
                 '<span class="favicon-fallback" style="display:none;">' + letter + '</span>' +
               '</span>' +
-              '<span class="bm-name">' + esc(b.name) + '<span class="bm-sub">' + host + '</span></span>' +
+              '<span class="bm-name">' + (badge ? badge + '. ' : '') + esc(b.name) + '<span class="bm-sub">' + host + '</span></span>' +
             '</span>' +
           '</button>';
         }).join("");
       }
-      lowerHtml = '<div class="inline-list-label">' + esc(meta.label) + '</div>' + rowsHtml;
+      lowerHtml = '<div class="inline-list-label">' + esc(meta2.label) + '</div>' + rowsHtml;
     } else {
       var apps = bookmarksIn(APP_CAT);
       var gridHtml;
@@ -403,12 +462,12 @@
         gridHtml = '<div class="app-empty-msg">No apps yet. Press "Options" to add one.</div>';
       } else {
         gridHtml = apps.map(function(b, i){
-          var flatIdx = order.findIndex(function(o){ return o.type === "appTile" && o.id === b.id; });
+          var r = 1 + Math.floor(i / APP_GRID_COLS), c = i % APP_GRID_COLS;
+          var badge = idxMap[r+"-"+c];
           var letter = esc((b.name || "?").charAt(0).toUpperCase());
           var fav = faviconUrl(b.url);
-          var idxLabel = i < 9 ? (i+1) : "";
-          return '<button class="app-tile navitem" data-flat="' + flatIdx + '" data-action="openBookmark" data-url="' + esc(b.url) + '" data-id="' + esc(b.id) + '">' +
-            (idxLabel ? '<span class="app-idx">' + idxLabel + '</span>' : '') +
+          return '<button class="app-tile navitem" data-action="openBookmark" data-row="' + r + '" data-col="' + c + '" data-url="' + esc(b.url) + '" data-id="' + esc(b.id) + '">' +
+            (badge ? '<span class="app-idx">' + badge + '</span>' : '') +
             '<span class="app-icon-wrap">' +
               '<img class="app-favicon" src="' + esc(fav) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
               '<span class="app-favicon-fallback" style="display:none;">' + letter + '</span>' +
@@ -517,22 +576,15 @@
 
   function focusCurrent(){
     if(state.screen === "home"){
-      var el = document.querySelector('#app .content [data-flat="' + state.homeFocusIndex + '"]');
+      var el = document.querySelector('#app .content [data-row="' + state.homeRow + '"][data-col="' + state.homeCol + '"]');
       if(el){ el.focus(); if(el.scrollIntoView) el.scrollIntoView({block:"nearest"}); return; }
     }
     var items = document.querySelectorAll("#app .content .navitem, #app .content input, #app .content select");
     if(items.length){ items[0].focus(); }
   }
 
-  function moveFocus(dir){
-    if(state.screen === "home"){
-      var order = buildHomeFocusOrder();
-      if(order.length === 0) return;
-      state.homeFocusIndex = (state.homeFocusIndex + dir + order.length) % order.length;
-      // list screen keeps a "current" bookmark id in ctx.focusId for Options-on-focused-item
-      focusCurrent();
-      return;
-    }
+  // Generic linear focus movement for non-home screens (form / optionsMenu / confirm)
+  function moveFocusLinear(dir){
     var items = Array.prototype.slice.call(
       document.querySelectorAll("#app .content .navitem, #app .content input, #app .content select")
     );
@@ -541,52 +593,6 @@
     if(idx === -1){ idx = 0; } else { idx = (idx + dir + items.length) % items.length; }
     items[idx].focus();
     if(items[idx].scrollIntoView){ items[idx].scrollIntoView({block: "nearest"}); }
-  }
-
-  function activateHomeItem(item){
-    if(!item) return;
-    if(item.type === "catTile"){
-      // Selecting a category tile expands its list inline (replacing the app grid),
-      // or collapses it back to the app grid if already expanded.
-      if(state.homeExpandedCat === item.cat){
-        state.homeExpandedCat = null;
-      } else {
-        state.homeExpandedCat = item.cat;
-      }
-      // keep focus on the same tile
-      var order = buildHomeFocusOrder();
-      var idx = order.findIndex(function(o){ return o.type === "catTile" && o.cat === item.cat; });
-      state.homeFocusIndex = idx === -1 ? 0 : idx;
-      render();
-    } else if(item.type === "inlineBookmark" || item.type === "appTile"){
-      var bm = findBookmark(item.id);
-      if(bm) openURL(bm.url);
-    }
-  }
-
-  function digitSelect(n){
-    if(state.screen === "home"){
-      // 1/2 always select the top category tiles regardless of expanded state
-      if(n === 1){ state.homeFocusIndex = 0; activateHomeItem({type:"catTile", cat:LIST_CAT_ORDER[0]}); return; }
-      if(n === 2){ state.homeFocusIndex = 1; activateHomeItem({type:"catTile", cat:LIST_CAT_ORDER[1]}); return; }
-      var order = buildHomeFocusOrder();
-      var target = order.filter(function(o){ return o.type === "appTile"; })[n - 3];
-      if(!state.homeExpandedCat && target){
-        var idx = order.indexOf(target);
-        state.homeFocusIndex = idx;
-        activateHomeItem(target);
-      }
-      return;
-    }
-    var items = Array.prototype.slice.call(document.querySelectorAll("#app .content .navitem[data-idx]"));
-    var el = items.filter(function(i){ return Number(i.dataset.idx) === n; })[0];
-    if(el){ el.focus(); el.click(); }
-  }
-
-  function handleOk(){
-    if(state.screen === "home"){
-      activateHomeItem(currentHomeItem());
-    }
   }
 
   // ---------- event delegation ----------
@@ -600,7 +606,18 @@
       var action = btn.dataset.action;
       var bm;
       switch(action){
-        case "openBookmark": openURL(btn.dataset.url); break;
+        case "homeSelect":
+          state.homeRow = Number(btn.dataset.row);
+          state.homeCol = Number(btn.dataset.col);
+          activateHomeItem({type:"catTile", cat: btn.dataset.cat});
+          break;
+        case "openBookmark":
+          if(btn.dataset.row !== undefined && state.screen === "home"){
+            state.homeRow = Number(btn.dataset.row);
+            state.homeCol = Number(btn.dataset.col);
+          }
+          openURL(btn.dataset.url);
+          break;
         case "softLeft": doLeftAction(); break;
         case "softRight": doRightAction(); break;
         case "goAddBookmark": pushScreen("form", {editId: null, category: btn.dataset.cat || ""}); break;
@@ -615,20 +632,6 @@
         case "confirmYes": confirmYes(); break;
         case "confirmNo": goBack(); break;
       }
-      if(btn.classList.contains("cat-tile") && action !== "softLeft" && action !== "softRight"){
-        // clicking a cat-tile itself (no data-action) falls through below
-      }
-    });
-
-    // clicking a cat-tile (no data-action attr, just navitem) toggles inline expansion
-    document.getElementById("app").addEventListener("click", function(e){
-      var tile = e.target.closest ? e.target.closest(".cat-tile") : null;
-      if(!tile) return;
-      var flat = Number(tile.dataset.flat);
-      var order = buildHomeFocusOrder();
-      var item = order[flat];
-      state.homeFocusIndex = flat;
-      activateHomeItem(item);
     });
 
     document.addEventListener("keydown", function(e){
@@ -650,27 +653,33 @@
         case "ArrowDown":
           if(inSelect) break;
           e.preventDefault();
-          if(state.screen === "home"){ moveFocus(3); } else { moveFocus(1); }
+          if(state.screen === "home"){ homeMove("down"); } else { moveFocusLinear(1); }
           break;
         case "ArrowUp":
           if(inSelect) break;
           e.preventDefault();
-          if(state.screen === "home"){ moveFocus(-3); } else { moveFocus(-1); }
+          if(state.screen === "home"){ homeMove("up"); } else { moveFocusLinear(-1); }
           break;
         case "ArrowRight":
           if(inSelect) break;
           if(inText) break;
-          e.preventDefault(); moveFocus(1); break;
+          e.preventDefault();
+          if(state.screen === "home"){ homeMove("right"); } else { moveFocusLinear(1); }
+          break;
         case "ArrowLeft":
           if(inSelect) break;
           if(inText) break;
-          e.preventDefault(); moveFocus(-1); break;
+          e.preventDefault();
+          if(state.screen === "home"){ homeMove("left"); } else { moveFocusLinear(-1); }
+          break;
         case "Enter":
-          if(inSelect){ e.preventDefault(); moveFocus(1); break; }
+          if(inSelect){ e.preventDefault(); moveFocusLinear(1); break; }
           if(state.screen === "home" && !inText){ e.preventDefault(); handleOk(); }
           break;
         default:
-          if(!inText && !inSelect && /^[1-9]$/.test(e.key)){ digitSelect(Number(e.key)); }
+          if(state.screen === "home" && !inText && !inSelect && /^[1-9]$/.test(e.key)){
+            homeDigitSelect(Number(e.key));
+          }
       }
     });
 
